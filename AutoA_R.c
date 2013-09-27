@@ -57,7 +57,7 @@ void initializeRobot()
   return;
 }
 
-//For condensed code, this function serves as an easy way to move all motors forward/backwards
+//For condensed code, this function serves as an easy way to move all motors forward/backwards. Distance is in cm
 void forward(int power, int distance)
 {
 	motor[motorF] = power;
@@ -67,7 +67,17 @@ void forward(int power, int distance)
 
 	if(distance != 0)
 	{
-		//TODO travel for distance
+		nMotorEncoder[motorF] = 0;
+		bool go = true;
+		while (go)
+		{
+			if (nMotorEncoder[motorF] * ((PI * 10.16) / 360) >= distance)
+				go = false;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
 	}
 }
 
