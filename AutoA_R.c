@@ -102,11 +102,31 @@ task main()
   waitForStart(); // Wait for the beginning of autonomous phase.
 
   //Find IR
-	while(SensorValue(SensorIR) != 8)
+bool found = false;
+while (found = false)
 	{
-		forward(60, 0);
+			if(SensorValue[sensorIR] == 0)
+			{
+				motor[motorE] = 75;
+				wait1Msec(1000);
+			}
+			if(SensorValue[sensorIR] == 5)
+			{
+				motor[motorF] = 75;
+				wait1Msec(2000);
+				found = true
+			}
+			if(SensorValue[sensorIR] < 5)
+			{
+				motor[motorH] = 75;
+				wait1Msec(3000);
+			}
+			if(SensorValue[sensorIR] > 5)
+			{
+				motor[motorI] = 75;
+				wait1Msec(4000);
+			}
 	}
-	forward(0, 0);
 
   //Align and drop
 
