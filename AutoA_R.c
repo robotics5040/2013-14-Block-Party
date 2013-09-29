@@ -107,24 +107,36 @@ while (found = false)
 	{
 			if(SensorValue[sensorIR] == 0)
 			{
-				motor[motorE] = 75;
-				wait1Msec(1000);
+				motor[motorF] = -75;
+				motor[motorG] = -75;
+				motor[motorH] = 75;
+				motor[motorI] = 75;
+				wait1Msec(200);
 			}
 			if(SensorValue[sensorIR] == 5)
 			{
 				motor[motorF] = 75;
-				wait1Msec(2000);
+				motor[motorG] = 75;
+				motor[motorH] = 75;
+				motor[motorI] = 75;
+				wait1Msec(200);
 				found = true
 			}
 			if(SensorValue[sensorIR] < 5)
 			{
+				motor[motorF] = -75;
+				motor[motorG] = -75;
 				motor[motorH] = 75;
-				wait1Msec(3000);
+				motor[motorI] = 75;
+				wait1Msec(200);
 			}
 			if(SensorValue[sensorIR] > 5)
 			{
-				motor[motorI] = 75;
-				wait1Msec(4000);
+				motor[motorF] = 75;
+				motor[motorG] = 75;
+				motor[motorH] = -75;
+				motor[motorI] = -75;
+				wait1Msec(200);
 			}
 	}
 
