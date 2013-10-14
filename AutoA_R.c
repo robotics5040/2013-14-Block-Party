@@ -71,7 +71,7 @@ void forward(int power, int distance)
 		bool go = true;
 		while (go)
 		{
-			if (nMotorEncoder[motorF] * ((PI * 10.16) / 360) >= distance)
+			if (nMotorEncoder[motorF] * (PI * 10.16) >= distance)
 				go = false;
 		}
 		motor[motorF] = 0;
@@ -91,24 +91,52 @@ void turn(int powL, int powR, int distance)
 
 	if(distance != 0)
 	{
-		//TODO travel for distance
+		nMotorEncoder[motorF] = 0;
+		bool go = true;
+		while (go)
+		{
+			if (nMotorEncoder[motorF] * (PI * 10.16) >= distance)
+				go = false;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
 	}
 }
 
 task main()
 {
   initializeRobot();
-
-  waitForStart(); // Wait for the beginning of autonomous phase.
+  nMotorEncoder[motorF] = 0;
 
   //Find IR
-	while(SensorValue(SensorIR) != 8)
+	while(SensorValue(SensorIR) != 9)
 	{
 		forward(60, 0);
 	}
 	forward(0, 0);
 
+	int rotated = nMotorEncoder[motorF];
+
   //Align and drop
+	while(SensorValue(SensorIR) != 5)
+		turn(70, -70, 0);
+	wait10Msec(15);
+	forward(50, 10);
+	forward(0, 0);
+	wait10Msec(50);
+
+	//Retrace steps
+	forward(-50, -13);
+	forward(0, 0);
+	if(rotated > -6500)
+		while(SensorValue(SensorIR) != 1)
+			turn(-70, 70, 0);
+	else
+		while(SensorValue(SensorIR) != 9)
+			turn(70, -70, 0);
 
   //Get to ramp
+	//MAKE AUTONOMOUS B FIRST THEN COMBINE
 }
