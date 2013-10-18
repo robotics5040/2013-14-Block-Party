@@ -1,11 +1,14 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  HTMotor,  HTMotor)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     SensorIR,       sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S3,     SensorColor,    sensorCOLORFULL)
+#pragma config(Sensor, S4,     SensorSonic,    sensorSONAR)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
@@ -98,9 +101,30 @@ task main()
   while (true)
   {
 	  getJoystickSettings(joystick);
-	  motor[motorF] = joystick.joy1_y2;
+
+
+	  if (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5)
+	  {
+	  	motor[motorF] = 0;
+	  	motor[motorG] = 0;
+		}
+		else
+		{
+		motor[motorF] = joystick.joy1_y2;
 	  motor[motorG] = joystick.joy1_y2;
+
+		}
+
+		if (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5)
+		{
+			motor[motorH] = 0;
+			motor[motorI] = 0;
+		}
+		else
+		{
+
 	  motor[motorH] = joystick.joy1_y1;
 	  motor[motorI] = joystick.joy1_y1;
+		}
   }
 }
