@@ -5,10 +5,10 @@
 #pragma config(Sensor, S4,     SensorSonic,    sensorSONAR)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, encoder)
 #pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
@@ -117,12 +117,27 @@ void turn(int powL, int powR, int distance)
 task main()
 {
   initializeRobot();
+
+  //If IR is in closest
+
+
+  //Line up for line follow
+	turn(60,-20, 4)
+	while(SensorValue(SensorColor) > 50)
+	{
+		forward(50, 0);
+	}
+	turn(20, -60, 3);
+
+  //Find IR while following line
   nMotorEncoder[motorF] = 0;
 
-  //Find IR
 	while(SensorValue(SensorIR) != 9)
 	{
-		forward(60, 0);
+		if(SensorValue(SensorColor) > 50)
+			turn(50, 60, 0);
+		else
+			turn(60, 50, 0);
 	}
 	forward(0, 0);
 
