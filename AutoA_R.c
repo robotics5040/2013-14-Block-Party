@@ -5,10 +5,10 @@
 #pragma config(Sensor, S4,     SensorSonic,    sensorSONAR)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
@@ -119,15 +119,16 @@ task main()
   initializeRobot();
 
   //If IR is in closest
-
+	//TODO find the value given if the IR is in closest
+  //TODO place cube in closest
 
   //Line up for line follow
-	turn(60,-20, 4)
+	turn(60,-20, 10);
 	while(SensorValue(SensorColor) > 50)
 	{
 		forward(50, 0);
 	}
-	turn(20, -60, 3);
+	turn(20, -60, 5);
 
   //Find IR while following line
   nMotorEncoder[motorF] = 0;
@@ -149,7 +150,7 @@ task main()
 	wait10Msec(15);
 	forward(50, 10);
 	forward(0, 0);
-	wait10Msec(50);
+	//TODO: Drop the cube into the bin (waiting on lift)
 
 	//Retrace steps
 	forward(-50, -13);
