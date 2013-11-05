@@ -24,9 +24,10 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//                                         Button Map
+//                               DirectInput Button Notes
 //
-// TODO
+// Buttons 0=X 1=A 2=B 3=Y 4=LB 5=RB 6=LT 7=RT 8=Back 9=Start 10=LSD 11=RSD
+// POV (D-Pad) -1=None 0-7=Positions (0=up, 1-7 +CW)
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,28 +104,74 @@ task main()
 	  getJoystickSettings(joystick);
 
 
-	  if (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5)
+	  //CONTROLLER 1 - Motors
+
+	  if (joy1Btn(10) || joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) //Threshold & Preset Speed Button - RSD - 0
 	  {
-	  	motor[motorF] = 0;
-	  	motor[motorG] = 0;
+	  	motor[motorE] = 0;
+	  	motor[motorD] = 0;
 		}
 		else
 		{
-		motor[motorF] = joystick.joy1_y2;
-	  motor[motorG] = joystick.joy1_y2;
-
+			if (joy1Btn(7) && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
+		  {
+		  	motor[motorE] = 75;
+		  	motor[motorD] = 75;
+			}
+			else if (joy1Btn(5) && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
+		  {
+		  	motor[motorE] = 30;
+		  	motor[motorD] = 30;
+			}
+			else if (joy1Btn(7) && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
+		  {
+		  	motor[motorE] = -75;
+		  	motor[motorD] = -75;
+			}
+			else if (joy1Btn(5) && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
+		  {
+		  	motor[motorE] = -30;
+		  	motor[motorD] = -30;
+			}
+			else //No Presets
+			{
+				motor[motorE] = joystick.joy1_y2;
+			  motor[motorD] = joystick.joy1_y2;
+			}
 		}
 
-		if (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5)
+		if (joy1Btn(11) || joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) //Threshold & Preset Speed Button - LSD - 0
 		{
 			motor[motorH] = 0;
 			motor[motorI] = 0;
 		}
 		else
 		{
-
-	  motor[motorH] = joystick.joy1_y1;
-	  motor[motorI] = joystick.joy1_y1;
+		  if (joy1Btn(6) && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
+		  {
+		  	motor[motorH] = 75;
+		  	motor[motorI] = 75;
+			}
+			else if (joy1Btn(4) && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
+		  {
+		  	motor[motorH] = 30;
+		  	motor[motorI] = 30;
+			}
+			else if (joy1Btn(6) && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
+		  {
+		  	motor[motorH] = -75;
+		  	motor[motorI] = -75;
+			}
+			else if (joy1Btn(4) && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
+		  {
+		  	motor[motorH] = -30;
+		  	motor[motorI] = -30;
+			}
+			else //No Presets
+			{
+				motor[motorH] = joystick.joy1_y1;
+			  motor[motorI] = joystick.joy1_y1;
+			}
 		}
   }
 }
