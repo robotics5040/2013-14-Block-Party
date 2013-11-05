@@ -172,6 +172,14 @@ task main()
 				motor[motorH] = joystick.joy1_y1;
 			  motor[motorI] = joystick.joy1_y1;
 			}
+			if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5)
+			{
+				motor[motorE] = 0;
+			}
+			else
+			{
+				motor[motorE] = joystick.joy2_y1;
+			}
 		}
   }
 }
