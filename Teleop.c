@@ -22,6 +22,11 @@
 //Motor H = Left Back
 //Motor I = Left Front
 
+//Motor D = Flag Manipulator Spin
+//Motor E = Block Manipulator Lift
+
+//Servo 1 = Flag Manipulator Tilt
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //                               DirectInput Button Notes
@@ -99,36 +104,73 @@ task main()
 
   waitForStart();   // wait for start of tele-op phase
 
+  bool esMotors = false; //Toggled state of Motor E-Stop mode
+	bool esmHold = false; //If the Motor E-Stop button (B) is being held
+
   while (true)
   {
 	  getJoystickSettings(joystick);
 
+	  //Emergency Stop
 
-	  //CONTROLLER 1 - Motors
+		if (joy1Btn(9) == 1 && joy2Btn(9) == 1) //Program will stop when E-Stop button (start) hit on both controllers
+		{
+			while (joy1Btn(9) == 1 && joy2Btn(9) == 1) //Wait until the buttons are released
+			{
+				getJoystickSettings(joystick);
+			}
+			while (joy1Btn(9) != 1 || joy2Btn(9) != 1) //Wait until they are pressed again
+			{
+				getJoystickSettings(joystick);
+			}
+			getJoystickSettings(joystick);
+		}
 
-	  if (joy1Btn(10) || joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) //Threshold & Preset Speed Button - RSD - 0
+		//Motor Emergency Stop
+
+		if (joy1Btn(2) == 1 && !esmHold) //Will toggle motor e-stop when Motor E-Stop button (B) hit on controller 1
+		{
+			if (esMotors)
+			{
+				esMotors = false;
+				esmHold = true;
+			}
+			else
+			{
+				esMotors = true;
+				esmHold = true;
+			}
+		}
+		else
+		{
+			esmHold = false;
+		}
+
+	  //Controller 1 - Motors
+
+	  if (joy1Btn(10) == 1 || (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) || esMotors) //Threshold & Preset Speed Button - RSD - 0
 	  {
 	  	motor[motorE] = 0;
 	  	motor[motorD] = 0;
 		}
 		else
 		{
-			if (joy1Btn(7) && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
+			if (joy1Btn(7) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
 		  {
 		  	motor[motorE] = 75;
 		  	motor[motorD] = 75;
 			}
-			else if (joy1Btn(5) && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
+			else if (joy1Btn(5) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
 		  {
 		  	motor[motorE] = 30;
 		  	motor[motorD] = 30;
 			}
-			else if (joy1Btn(7) && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
+			else if (joy1Btn(7) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
 		  {
 		  	motor[motorE] = -75;
 		  	motor[motorD] = -75;
 			}
-			else if (joy1Btn(5) && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
+			else if (joy1Btn(5) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
 		  {
 		  	motor[motorE] = -30;
 		  	motor[motorD] = -30;
@@ -140,29 +182,29 @@ task main()
 			}
 		}
 
-		if (joy1Btn(11) || joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) //Threshold & Preset Speed Button - LSD - 0
+		if (joy1Btn(11) == 1 || (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) || esMotors) //Threshold & Preset Speed Button - LSD - 0
 		{
 			motor[motorH] = 0;
 			motor[motorI] = 0;
 		}
 		else
 		{
-		  if (joy1Btn(6) && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
+		  if (joy1Btn(6) == 1 && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
 		  {
 		  	motor[motorH] = 75;
 		  	motor[motorI] = 75;
 			}
-			else if (joy1Btn(4) && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
+			else if (joy1Btn(4) == 1 && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
 		  {
 		  	motor[motorH] = 30;
 		  	motor[motorI] = 30;
 			}
-			else if (joy1Btn(6) && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
+			else if (joy1Btn(6) == 1 && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
 		  {
 		  	motor[motorH] = -75;
 		  	motor[motorI] = -75;
 			}
-			else if (joy1Btn(4) && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
+			else if (joy1Btn(4) == 1 && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
 		  {
 		  	motor[motorH] = -30;
 		  	motor[motorI] = -30;
@@ -172,14 +214,17 @@ task main()
 				motor[motorH] = joystick.joy1_y1;
 			  motor[motorI] = joystick.joy1_y1;
 			}
-			if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5)
-			{
-				motor[motorE] = 0;
-			}
-			else
-			{
-				motor[motorE] = joystick.joy2_y1;
-			}
+		}
+
+		//Controller 2 - Block Manipulator & Flag Manipulator
+
+		if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5)
+		{
+			motor[motorE] = 0;
+		}
+		else
+		{
+			motor[motorE] = joystick.joy2_y1;
 		}
   }
 }
