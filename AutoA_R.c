@@ -56,6 +56,14 @@ void initializeRobot()
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
 
+	while (nMotorEncoderTarget[motorC] != 0)
+	{
+		if (nMotorEncoderTarget[motorC] > 0)
+			motor[motorC] = -30;
+		else
+			motor[motorC] = 30;
+	}
+	motor[motorC] = 0;
   return;
 }
 
@@ -139,17 +147,28 @@ task main()
 		turn(-60, 60, 0);
 	forward(50, 27);
 	forward(0, 0);
-	//TODO: Drop the cube into the bin (waiting on lift)
+
+	//Drop cube
+	motor[motorE] = 20;
+	nMotorEncoderTarget[motorE] = 530;
+	while (nMotorEncoderTarget[motorC] != 530)
+	{
+		if (nMotorEncoderTarget[motorC] > -530)
+			motor[motorC] = -30;
+		else
+			motor[motorC] = 30;
+	}
+	motor[motorC] = 0;
 
 	//Retrace steps
 	forward(-50, -17);
 	forward(0, 0);
 	if(rotated > -6500)
 		while(SensorValue(SensorIR) != 1)
-			turn(-70, 70, 10);
+			turn(70, -70, 0);
 	else
 		while(SensorValue(SensorIR) != 9)
-			turn(70, -70, 10);
+			turn(-70, 70, 0);
 
   //Get to ramp
 	//MAKE AUTONOMOUS B FIRST THEN COMBINE
