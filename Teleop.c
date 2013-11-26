@@ -110,6 +110,7 @@ task main()
   while (true)
   {
 	  getJoystickSettings(joystick);
+	  int btnDebug = joy1Btn(3);
 
 	  //Emergency Stop
 
@@ -150,35 +151,35 @@ task main()
 
 	  if (joy1Btn(10) == 1 || (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) || esMotors) //Threshold & Preset Speed Button - RSD - 0
 	  {
-	  	motor[motorE] = 0;
-	  	motor[motorD] = 0;
+	  	motor[motorG] = 0;
+	  	motor[motorF] = 0;
 		}
 		else
 		{
 			if (joy1Btn(7) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
 		  {
-		  	motor[motorE] = 75;
-		  	motor[motorD] = 75;
+		  	motor[motorG] = 75;
+		  	motor[motorF] = 75;
 			}
 			else if (joy1Btn(5) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
 		  {
-		  	motor[motorE] = 30;
-		  	motor[motorD] = 30;
+		  	motor[motorG] = 30;
+		  	motor[motorF] = 30;
 			}
 			else if (joy1Btn(7) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
 		  {
-		  	motor[motorE] = -75;
-		  	motor[motorD] = -75;
+		  	motor[motorG] = -75;
+		  	motor[motorF] = -75;
 			}
 			else if (joy1Btn(5) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
 		  {
-		  	motor[motorE] = -30;
-		  	motor[motorD] = -30;
+		  	motor[motorG] = -30;
+		  	motor[motorF] = -30;
 			}
-			else //No Presets
+			else //No Presets - RS
 			{
-				motor[motorE] = joystick.joy1_y2;
-			  motor[motorD] = joystick.joy1_y2;
+				motor[motorG] = joystick.joy1_y2;
+			  motor[motorF] = joystick.joy1_y2;
 			}
 		}
 
@@ -209,7 +210,7 @@ task main()
 		  	motor[motorH] = -30;
 		  	motor[motorI] = -30;
 			}
-			else //No Presets
+			else //No Presets - LS
 			{
 				motor[motorH] = joystick.joy1_y1;
 			  motor[motorI] = joystick.joy1_y1;
@@ -218,13 +219,22 @@ task main()
 
 		//Controller 2 - Block Manipulator & Flag Manipulator
 
-		if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5)
+		if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5) //Threshold
+		{
+			motor[motorC] = 0;
+		}
+		else //Tilt Block Manipulator - LS
+		{
+			motor[motorC] = joystick.joy2_y1 / 2;
+		}
+
+		if (joystick.joy2_y2 < 5 && joystick.joy2_y2 > -5) //Threshold
 		{
 			motor[motorE] = 0;
 		}
-		else
+		else //Lift Block Manipulator - RS
 		{
-			motor[motorE] = joystick.joy2_y1;
+			motor[motorE] = joystick.joy2_y2 / 3;
 		}
   }
 }
