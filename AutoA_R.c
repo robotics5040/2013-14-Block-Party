@@ -56,15 +56,38 @@ void initializeRobot()
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
 
-	while (nMotorEncoderTarget[motorC] != 0)
+	nMotorEncoder[motorE] = 0;
+	nMotorEncoder[motorC] = 0;
+}
+
+//Used to tilt the block manipulator while addressing weight distribution
+void liftTo(int encTarget, int threshold, int startPower, int endPower, int tiltPower)
+{
+	motor[motorE] = 20;
+	int encStart = nMotorEncoder[motorE];
+	float rate = (startPower - endPower) / abs(encTarget - encStart);
+
+	int encCurr = nMotorEncoder[motorE];
+	int powCurr = startPower;
+
+	while (!(nMotorEncoder[motorE] < encTarget + threshold && nMotorEncoder[motorE] > encTarget - threshold))
 	{
-		if (nMotorEncoderTarget[motorC] > 0)
-			motor[motorC] = -30;
+		if (nMotorEncoder[motorE] != encCurr) //Checks if encoder value moved and adjusts the power
+		{
+			powCurr += rate * abs(nMotorEncoder[motorE] - encCurr);
+			encCurr = nMotorEncoder[motorE];
+		}
+
+		if (nMotorEncoder[motorE] > encTarget) //Sets the power based on direction
+			motor[motorE] = powCurr * -1;
 		else
-			motor[motorC] = 30;
+			motor[motorE] = powCurr;
+
+		motor[motorC] = tiltPower;
 	}
-	motor[motorC] = 0;
-  return;
+	motor[motorE] = -10;
+	wait10Msec(50);
+	motor[motorE] = 0;
 }
 
 //For condensed code, this function serves as an easy way to move all motors forward/backwards. Distance is in cm
@@ -143,31 +166,28 @@ task main()
 	int rotated = nMotorEncoder[motorI];
 
   //Align and drop
+	forward(-45, -20);
 	while(SensorValue(SensorIR) != 5)
 		turn(-60, 60, 0);
 	forward(50, 27);
 	forward(0, 0);
 
 	//Drop cube
-	motor[motorE] = 20;
-	nMotorEncoderTarget[motorE] = 530;
-	while (nMotorEncoderTarget[motorC] != 530)
-	{
-		if (nMotorEncoderTarget[motorC] > -530)
-			motor[motorC] = -30;
-		else
-			motor[motorC] = 30;
-	}
+	liftTo(680, 20, 60, 15, 20);
+	while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
+		motor[motorC] = -60;
 	motor[motorC] = 0;
+	wait10Msec(50);
+	liftTo(0, 10, 25, 8, 0);
 
 	//Retrace steps
 	forward(-50, -17);
 	forward(0, 0);
 	if(rotated > -6500)
-		while(SensorValue(SensorIR) != 1)
+		while(SensorValue(SensorIR) != 9)
 			turn(70, -70, 0);
 	else
-		while(SensorValue(SensorIR) != 9)
+		while(SensorValue(SensorIR) != 1)
 			turn(-70, 70, 0);
 
   //Get to ramp
