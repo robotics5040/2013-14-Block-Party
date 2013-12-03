@@ -1,14 +1,13 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  HTMotor,  HTMotor)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     SensorIR,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     SensorColor,    sensorCOLORFULL)
 #pragma config(Sensor, S4,     SensorSonic,    sensorSONAR)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, encoder)
-#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, encoder)
 #pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
@@ -110,17 +109,16 @@ task main()
   while (true)
   {
 	  getJoystickSettings(joystick);
-	  int btnDebug = joy1Btn(3);
 
 	  //Emergency Stop
 
-		if (joy1Btn(9) == 1 && joy2Btn(9) == 1) //Program will stop when E-Stop button (start) hit on both controllers
+		if (joy1Btn(10) && joy2Btn(10)) //Program will stop when E-Stop button (start) hit on both controllers
 		{
-			while (joy1Btn(9) == 1 && joy2Btn(9) == 1) //Wait until the buttons are released
+			while (joy1Btn(10) && joy2Btn(10)) //Wait until the buttons are released
 			{
 				getJoystickSettings(joystick);
 			}
-			while (joy1Btn(9) != 1 || joy2Btn(9) != 1) //Wait until they are pressed again
+			while (! joy1Btn(10) || ! joy2Btn(10)) //Wait until they are pressed again
 			{
 				getJoystickSettings(joystick);
 			}
@@ -129,7 +127,7 @@ task main()
 
 		//Motor Emergency Stop
 
-		if (joy1Btn(2) == 1 && !esmHold) //Will toggle motor e-stop when Motor E-Stop button (B) hit on controller 1
+		if (joy1Btn(3) && !esmHold) //Will toggle motor e-stop when Motor E-Stop button (B) hit on controller 1
 		{
 			if (esMotors)
 			{
@@ -149,29 +147,29 @@ task main()
 
 	  //Controller 1 - Motors
 
-	  if (joy1Btn(10) == 1 || (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) || esMotors) //Threshold & Preset Speed Button - RSD - 0
+	  if (joy1Btn(11) || (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) || esMotors) //Threshold & Preset Speed Button - RSD - 0
 	  {
 	  	motor[motorG] = 0;
 	  	motor[motorF] = 0;
 		}
 		else
 		{
-			if (joy1Btn(7) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
+			if (joy1Btn(8) && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
 		  {
 		  	motor[motorG] = 75;
 		  	motor[motorF] = 75;
 			}
-			else if (joy1Btn(5) == 1 && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
+			else if (joy1Btn(6) && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
 		  {
 		  	motor[motorG] = 30;
 		  	motor[motorF] = 30;
 			}
-			else if (joy1Btn(7) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
+			else if (joy1Btn(8) && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
 		  {
 		  	motor[motorG] = -75;
 		  	motor[motorF] = -75;
 			}
-			else if (joy1Btn(5) == 1 && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
+			else if (joy1Btn(6) && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
 		  {
 		  	motor[motorG] = -30;
 		  	motor[motorF] = -30;
@@ -183,29 +181,29 @@ task main()
 			}
 		}
 
-		if (joy1Btn(11) == 1 || (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) || esMotors) //Threshold & Preset Speed Button - LSD - 0
+		if (joy1Btn(12) || (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) || esMotors) //Threshold & Preset Speed Button - LSD - 0
 		{
 			motor[motorH] = 0;
 			motor[motorI] = 0;
 		}
 		else
 		{
-		  if (joy1Btn(6) == 1 && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
+		  if (joy1Btn(7) && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
 		  {
 		  	motor[motorH] = 75;
 		  	motor[motorI] = 75;
 			}
-			else if (joy1Btn(4) == 1 && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
+			else if (joy1Btn(5) && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
 		  {
 		  	motor[motorH] = 30;
 		  	motor[motorI] = 30;
 			}
-			else if (joy1Btn(6) == 1 && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
+			else if (joy1Btn(7) && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
 		  {
 		  	motor[motorH] = -75;
 		  	motor[motorI] = -75;
 			}
-			else if (joy1Btn(4) == 1 && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
+			else if (joy1Btn(5) && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
 		  {
 		  	motor[motorH] = -30;
 		  	motor[motorI] = -30;
@@ -219,13 +217,21 @@ task main()
 
 		//Controller 2 - Block Manipulator & Flag Manipulator
 
+		int tilt = 2; //Potential power for tilting the block manipulator
+		int lift = 3; //Potential power for lifting the block manipulator
+
+		if(joy2Btn(12)) //Increased potential power for lifting the block manipulator - LSD
+			lift = 0;
+		if(joy2Btn(11)) //Increased potential power for tilting the block manipulator - RSD
+			tilt = 0;
+
 		if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5) //Threshold
 		{
 			motor[motorC] = 0;
 		}
 		else //Tilt Block Manipulator - LS
 		{
-			motor[motorC] = joystick.joy2_y1 / 2;
+			motor[motorC] = joystick.joy2_y1 / tilt;
 		}
 
 		if (joystick.joy2_y2 < 5 && joystick.joy2_y2 > -5) //Threshold
@@ -234,7 +240,7 @@ task main()
 		}
 		else //Lift Block Manipulator - RS
 		{
-			motor[motorE] = joystick.joy2_y2 / 3;
+			motor[motorE] = joystick.joy2_y2 / lift;
 		}
   }
 }
