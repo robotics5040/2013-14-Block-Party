@@ -57,31 +57,57 @@ void initializeRobot()
   return;
 }
 
-//For condensed code, this function serves as an easy way to move all motors forward/backwards
+//For condensed code, this function serves as an easy way to move all motors forward/backwards. Distance is in cm
 void forward(int power, int distance)
 {
-	motor[motorF] = power;
-	motor[motorG] = power;
-	motor[motorH] = power;
-	motor[motorI] = power;
-
 	if(distance != 0)
 	{
-		//TODO travel for distance
+		nMotorEncoder[motorH] = 0;
+		while (69 * distance > nMotorEncoder[motorH])
+		{
+			motor[motorF] = power;
+			motor[motorG] = power;
+			motor[motorH] = power;
+			motor[motorI] = power;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
+	}
+	else
+	{
+		motor[motorF] = power;
+		motor[motorG] = power;
+		motor[motorH] = power;
+		motor[motorI] = power;
 	}
 }
 
 //For condensed code, this function serves as an easy way to turn the robot by specifing the two sides power
 void turn(int powL, int powR, int distance)
 {
-	motor[motorF] = powR;
-	motor[motorG] = powR;
-	motor[motorH] = powL;
-	motor[motorI] = powL;
-
 	if(distance != 0)
 	{
-		//TODO travel for distance
+		nMotorEncoder[motorH] = 0;
+		while (69 * distance > nMotorEncoder[motorH])
+		{
+			motor[motorF] = powR;
+			motor[motorG] = powR;
+			motor[motorH] = powL;
+			motor[motorI] = powL;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
+	}
+	else
+	{
+		motor[motorF] = powR;
+		motor[motorG] = powR;
+		motor[motorH] = powL;
+		motor[motorI] = powL;
 	}
 }
 
@@ -98,16 +124,17 @@ task main()
 
 	while (nMotorEncoder[motorF] != 50)
 	{
-		if (SensorValue[SensorColor] == 0)
-			forward(70, 0);
+		if (SensorValue[SensorColor] > 10)
+			turn(60, 20, 0);
 		else
-			turn(-50, 50, 0);
+			turn(20, 60, 0);
 
 		if (SensorValue[SensorSonic] < 25)
 		{
-			turn(-40, 60, 45);
+			turn(-40, 60, 12);
 			while (SensorValue[SensorColor] != 0)
 		  	forward(60, 0);
+		 	turn(60, -40, -12);
 		}
 	}
 }
