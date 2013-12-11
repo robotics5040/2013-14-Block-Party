@@ -26,6 +26,7 @@
 //Motor E = Block Manipulator Lift
 
 //Servo 1 = Flag Manipulator Tilt
+//Servo 2 = Flag Manipulator Tilt
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -49,6 +50,16 @@
 
 #include "JoystickDriver.c"  //Include file to "handle" the Bluetooth messages.
 
+void stopMotors()
+{
+	motor[motorB] = 0;
+	motor[motorC] = 0;
+	motor[motorD] = 0;
+	motor[motorE] = 0;
+	motor[motorF] = 0;
+	motor[motorH] = 0;
+	motor[motorI] = 0;
+}
 
 //Used to tilt the block manipulator while addressing weight distribution
 void liftTo(int encTarget, int threshold, int startPower, int endPower, int tiltPower)
@@ -146,6 +157,7 @@ task main()
 
 		if (joy1Btn(10) && joy2Btn(10)) //Program will stop when E-Stop button (start) hit on both controllers
 		{
+			stopMotors();
 			while (joy1Btn(10) && joy2Btn(10)) //Wait until the buttons are released
 			{
 				getJoystickSettings(joystick);
@@ -165,6 +177,10 @@ task main()
 			{
 				esMotors = false;
 				esmHold = true;
+				motor[motorE] = 0;
+				motor[motorF] = 0;
+				motor[motorH] = 0;
+				motor[motorI] = 0;
 			}
 			else
 			{
@@ -275,6 +291,7 @@ task main()
 
 		if(joy2Btn(2)) //Autonomous Dumping for 1-2 Blocks - A
 		{
+			stopMotors();
 			liftTo(680, 20, 60, 15, 20);
 			while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
 			{
@@ -288,6 +305,7 @@ task main()
 		}
 		if(joy2Btn(1)) //Autonomous Dumping for 3-4 Blocks - X
 		{
+			stopMotors();
 			liftTo(680, 20, 85, 25, 20);
 			while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
 			{
@@ -299,6 +317,24 @@ task main()
 			wait10Msec(50);
 			liftTo(0, 10, 25, 8, 0);
 		}
+
+		if(joy2Btn(5)) //Tilt Flag Manipulator down - LB
+		{
+			servo[servo1] -= 5;
+			servo[servo2] += 5;
+		}
+		else if(joy2Btn(7)) //Tilt Flag Manipulator up - LT
+		{
+			servo[servo1] += 5;
+			servo[servo2] -= 5;
+		}
+
+		if(joy2Btn(6)) //Spin Flag Manipulator counter-clockwise - RB
+			motor[motorD] = -30;
+		else if(joy2Btn(8)) //Spin Flag Manipulator clockwise - RT
+			motor[motorD] = 30;
+		else
+			motor[motorD] = 0;
 
 		if(joystick.joy2_TopHat == 0) //Set tilt of Flag Manipulator to ready position - D-Pad Up
 		{
