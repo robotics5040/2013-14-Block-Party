@@ -9,8 +9,8 @@
 #pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop, encoder)
-#pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoNone)
-#pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoNone)
+#pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoStandard)
+#pragma config(Servo,  srvo_S1_C2_2,    servo2,               tServoStandard)
 #pragma config(Servo,  srvo_S1_C2_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C2_5,    servo5,               tServoNone)
@@ -71,9 +71,12 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 	int encCurr = nMotorEncoder[motorE];
 	int powCurr = startPower;
 
-	while (!(nMotorEncoder[motorE] < encTarget + threshold && nMotorEncoder[motorE] > encTarget - threshold))
+	bool forward = encTarget > encCurr;
+
+	while (!(nMotorEncoder[motorE] < encTarget + threshold && !forward) && !(nMotorEncoder[motorE] > encTarget - threshold && forward))
 	{
-		if (nMotorEncoder[motorE] != encCurr) //Checks if encoder value moved and adjusts the power
+
+		if (nMotorEncoder[motorE] != encCurr)// && !passed) //Checks if encoder value moved and adjusts the power
 		{
 			powCurr += rate * abs(nMotorEncoder[motorE] - encCurr);
 			encCurr = nMotorEncoder[motorE];
@@ -84,12 +87,17 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 		else
 			motor[motorE] = powCurr;
 
-		motor[motorC] = tiltPower;
-		motor[motorB] = tiltPower;
+		if (abs(nMotorEncoder[motorE] - encStart) > 400)
+		{
+			motor[motorB] = tiltPower;
+			motor[motorC] = tiltPower;
+		}
+		else
+		{
+			motor[motorB] = tiltPower / -5;
+			motor[motorC] = tiltPower / -5;
+		}
 	}
-	motor[motorE] = -10;
-	wait10Msec(50);
-	motor[motorE] = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +185,7 @@ task main()
 			{
 				esMotors = false;
 				esmHold = true;
-				motor[motorE] = 0;
+				motor[motorG] = 0;
 				motor[motorF] = 0;
 				motor[motorH] = 0;
 				motor[motorI] = 0;
@@ -195,69 +203,69 @@ task main()
 
 	  if (joy1Btn(11) || (joystick.joy1_y2 < 5 && joystick.joy1_y2 > -5) || esMotors) //Threshold & Preset Speed Button - RSD - 0
 	  {
-	  	motor[motorG] = 0;
-	  	motor[motorF] = 0;
+	  	motor[motorH] = 0;
+	  	motor[motorI] = 0;
 		}
 		else
 		{
 			if (joy1Btn(8) && joystick.joy1_y2 > 0) //Preset Speed Button - RT - 75
 		  {
-		  	motor[motorG] = 75;
-		  	motor[motorF] = 75;
+		  	motor[motorH] = 75;
+		  	motor[motorI] = 75;
 			}
 			else if (joy1Btn(6) && joystick.joy1_y2 > 0) //Preset Speed Button - RB - 30
 		  {
-		  	motor[motorG] = 30;
-		  	motor[motorF] = 30;
+		  	motor[motorH] = 30;
+		  	motor[motorI] = 30;
 			}
 			else if (joy1Btn(8) && joystick.joy1_y2 < 0) //Preset Speed Button - RT - -75
 		  {
-		  	motor[motorG] = -75;
-		  	motor[motorF] = -75;
+		  	motor[motorH] = -75;
+		  	motor[motorI] = -75;
 			}
 			else if (joy1Btn(6) && joystick.joy1_y2 < 0) //Preset Speed Button - RB - -30
 		  {
-		  	motor[motorG] = -30;
-		  	motor[motorF] = -30;
+		  	motor[motorH] = -30;
+		  	motor[motorI] = -30;
 			}
 			else //No Presets - RS
 			{
-				motor[motorG] = joystick.joy1_y2;
-			  motor[motorF] = joystick.joy1_y2;
+				motor[motorH] = joystick.joy1_y2;
+			  motor[motorI] = joystick.joy1_y2;
 			}
 		}
 
 		if (joy1Btn(12) || (joystick.joy1_y1 < 5 && joystick.joy1_y1 > -5) || esMotors) //Threshold & Preset Speed Button - LSD - 0
 		{
-			motor[motorH] = 0;
-			motor[motorI] = 0;
+			motor[motorF] = 0;
+			motor[motorG] = 0;
 		}
 		else
 		{
 		  if (joy1Btn(7) && joystick.joy1_y1 > 0) //Preset Speed Button - LT - 75
 		  {
-		  	motor[motorH] = 75;
-		  	motor[motorI] = 75;
+		  	motor[motorF] = 75;
+		  	motor[motorG] = 75;
 			}
 			else if (joy1Btn(5) && joystick.joy1_y1 > 0) //Preset Speed Button - LB - 30
 		  {
-		  	motor[motorH] = 30;
-		  	motor[motorI] = 30;
+		  	motor[motorF] = 30;
+		  	motor[motorG] = 30;
 			}
 			else if (joy1Btn(7) && joystick.joy1_y1 < 0) //Preset Speed Button - LT - -75
 		  {
-		  	motor[motorH] = -75;
-		  	motor[motorI] = -75;
+		  	motor[motorF] = -75;
+		  	motor[motorG] = -75;
 			}
 			else if (joy1Btn(5) && joystick.joy1_y1 < 0) //Preset Speed Button - LB - -30
 		  {
-		  	motor[motorH] = -30;
-		  	motor[motorI] = -30;
+		  	motor[motorF] = -30;
+		  	motor[motorG] = -30;
 			}
 			else //No Presets - LS
 			{
-				motor[motorH] = joystick.joy1_y1;
-			  motor[motorI] = joystick.joy1_y1;
+				motor[motorF] = joystick.joy1_y1;
+			  motor[motorG] = joystick.joy1_y1;
 			}
 		}
 
@@ -274,10 +282,12 @@ task main()
 		if (joystick.joy2_y1 < 5 && joystick.joy2_y1 > -5) //Threshold
 		{
 			motor[motorC] = 0;
+			motor[motorB] = 0;
 		}
 		else //Tilt Block Manipulator - LS
 		{
 			motor[motorC] = joystick.joy2_y1 / tilt;
+			motor[motorB] = joystick.joy2_y1 / tilt;
 		}
 
 		if (joystick.joy2_y2 < 5 && joystick.joy2_y2 > -5) //Threshold
@@ -292,30 +302,40 @@ task main()
 		if(joy2Btn(2)) //Autonomous Dumping for 1-2 Blocks - A
 		{
 			stopMotors();
-			liftTo(680, 20, 60, 15, 20);
-			while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
+			liftTo(700, 25, 60, 15, 15); //Lifts steadily to encoder value 700
+			motor[motorE] = 15; //Continue into stopper
+			wait10Msec(110);
+			motor[motorE] = 0; //Stop the lift
+			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
 			{
-				motor[motorC] = -60;
-				motor[motorB] = -60;
+				motor[motorC] = -20;
+				motor[motorB] = -20;
 			}
-			motor[motorC] = 0;
 			motor[motorB] = 0;
+			motor[motorC] = 0;
 			wait10Msec(50);
-			liftTo(0, 10, 25, 8, 0);
+			liftTo(500, 80, 50, 10, 1);
+			motor[motorE] = 2;
+			wait10Msec(200);
 		}
 		if(joy2Btn(1)) //Autonomous Dumping for 3-4 Blocks - X
 		{
 			stopMotors();
-			liftTo(680, 20, 85, 25, 20);
-			while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
+			liftTo(700, 25, 82, 6, 15); //Lifts steadily to encoder value 700
+			motor[motorE] = 15; //Continue into stopper
+			wait10Msec(110);
+			motor[motorE] = 0; //Stop the lift
+			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
 			{
-				motor[motorC] = -60;
-				motor[motorB] = -60;
+				motor[motorC] = -20;
+				motor[motorB] = -20;
 			}
-			motor[motorC] = 0;
 			motor[motorB] = 0;
+			motor[motorC] = 0;
 			wait10Msec(50);
-			liftTo(0, 10, 25, 8, 0);
+			liftTo(500, 80, 50, 10, 1);
+			motor[motorE] = 2;
+			wait10Msec(200);
 		}
 
 		if(joy2Btn(5)) //Tilt Flag Manipulator down - LB
