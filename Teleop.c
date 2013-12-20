@@ -57,6 +57,7 @@ void stopMotors()
 	motor[motorD] = 0;
 	motor[motorE] = 0;
 	motor[motorF] = 0;
+	motor[motorG] = 0;
 	motor[motorH] = 0;
 	motor[motorI] = 0;
 }
@@ -304,7 +305,7 @@ task main()
 			stopMotors();
 			liftTo(700, 25, 60, 15, 15); //Lifts steadily to encoder value 700
 			motor[motorE] = 15; //Continue into stopper
-			wait10Msec(110);
+			wait10Msec(90);
 			motor[motorE] = 0; //Stop the lift
 			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
 			{
@@ -313,17 +314,16 @@ task main()
 			}
 			motor[motorB] = 0;
 			motor[motorC] = 0;
-			wait10Msec(50);
+			wait10Msec(30);
 			liftTo(500, 80, 50, 10, 1);
 			motor[motorE] = 2;
-			wait10Msec(200);
 		}
 		if(joy2Btn(1)) //Autonomous Dumping for 3-4 Blocks - X
 		{
 			stopMotors();
 			liftTo(700, 25, 82, 6, 15); //Lifts steadily to encoder value 700
 			motor[motorE] = 15; //Continue into stopper
-			wait10Msec(110);
+			wait10Msec(90);
 			motor[motorE] = 0; //Stop the lift
 			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
 			{
@@ -332,10 +332,9 @@ task main()
 			}
 			motor[motorB] = 0;
 			motor[motorC] = 0;
-			wait10Msec(50);
+			wait10Msec(30);
 			liftTo(500, 80, 50, 10, 1);
 			motor[motorE] = 2;
-			wait10Msec(200);
 		}
 
 		if(joy2Btn(5)) //Tilt Flag Manipulator down - LB
@@ -358,7 +357,7 @@ task main()
 
 		if(joystick.joy2_TopHat == 0) //Set tilt of Flag Manipulator to ready position - D-Pad Up
 		{
-			servo[servo1] = 45;
+			servo[servo1] = 90;
 		}
 		if(joystick.joy2_TopHat == 4) //Set tilt of Flag Manipulator to idle position - D-Pad Down
 		{
