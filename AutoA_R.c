@@ -70,9 +70,12 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 	int encCurr = nMotorEncoder[motorE];
 	int powCurr = startPower;
 
-	while (!(nMotorEncoder[motorE] < encTarget + threshold && nMotorEncoder[motorE] > encTarget - threshold))
+	bool forward = encTarget > encCurr;
+
+	while (!(nMotorEncoder[motorE] < encTarget + threshold && !forward) && !(nMotorEncoder[motorE] > encTarget - threshold && forward))
 	{
-		if (nMotorEncoder[motorE] != encCurr) //Checks if encoder value moved and adjusts the power
+
+		if (nMotorEncoder[motorE] != encCurr)// && !passed) //Checks if encoder value moved and adjusts the power
 		{
 			powCurr += rate * abs(nMotorEncoder[motorE] - encCurr);
 			encCurr = nMotorEncoder[motorE];
@@ -83,11 +86,17 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 		else
 			motor[motorE] = powCurr;
 
-		motor[motorC] = tiltPower;
+		if (abs(nMotorEncoder[motorE] - encStart) > 400)
+		{
+			motor[motorB] = tiltPower;
+			motor[motorC] = tiltPower;
+		}
+		else
+		{
+			motor[motorB] = tiltPower / -5;
+			motor[motorC] = tiltPower / -5;
+		}
 	}
-	motor[motorE] = -10;
-	wait10Msec(50);
-	motor[motorE] = 0;
 }
 
 //For condensed code, this function serves as an easy way to move all motors forward/backwards. Distance is in cm
@@ -96,7 +105,7 @@ void forward(int power, int distance)
 	if(distance != 0)
 	{
 		nMotorEncoder[motorH] = 0;
-		while (69 * distance > nMotorEncoder[motorH])
+		while (69 * abs(distance) > abs(nMotorEncoder[motorH]))
 		{
 			motor[motorF] = power;
 			motor[motorG] = power;
@@ -123,7 +132,7 @@ void turn(int powL, int powR, int distance)
 	if(distance != 0)
 	{
 		nMotorEncoder[motorH] = 0;
-		while (69 * distance > nMotorEncoder[motorH])
+		while (69 * abs(distance) > abs(nMotorEncoder[motorH]))
 		{
 			motor[motorF] = powR;
 			motor[motorG] = powR;
@@ -153,43 +162,64 @@ task main()
 
   if(SensorValue(SensorIR) != 9) //If IR is in closest, skip this part
 	{
-		while(SensorValue(SensorIR) != 8)
+		while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9)
 		{
 			if(SensorValue(SensorColor) > 10)
 				turn(60, 20, 0);
 			else
 				turn(20, 60, 0);
 		}
-		forward(0, 0);
 	}
 
 	int rotated = nMotorEncoder[motorI];
 
-  //Align and drop
-	forward(-45, -20);
+  //Align to drop
+	forward(-45, -10);
 	while(SensorValue(SensorIR) != 5)
 		turn(-60, 60, 0);
-	forward(50, 27);
+	forward(50, 36);
 	forward(0, 0);
 
 	//Drop cube
-	liftTo(680, 20, 60, 15, 20);
-	while (!(nMotorEncoder[motorC] < 40 + 50 && nMotorEncoder[motorC] > 40 - 50))
-		motor[motorC] = -60;
+	liftTo(700, 25, 82, 6, 15); //Lifts steadily to encoder value 700
+	motor[motorE] = 15; //Continue into stopper
+	wait10Msec(90);
+	motor[motorE] = 0; //Stop the lift
+	while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
+	{
+		motor[motorC] = -20;
+		motor[motorB] = -20;
+	}
+	motor[motorB] = 0;
 	motor[motorC] = 0;
-	wait10Msec(50);
-	liftTo(0, 10, 25, 8, 0);
+	wait10Msec(30);
+	liftTo(500, 80, 50, 10, 1);
+	motor[motorE] = 0;
 
 	//Retrace steps
 	forward(-50, -17);
 	forward(0, 0);
-	if(rotated > -6500)
-		while(SensorValue(SensorIR) != 9)
-			turn(70, -70, 0);
+	if(rotated > 2000)
+		turn(70, -70, 17);
 	else
-		while(SensorValue(SensorIR) != 1)
-			turn(-70, 70, 0);
+		turn(-70, 70, 17);
 
+		//line up to start autonomous b
+		while (SensorValue(SensorSonic) > 50)
+		{
+			motor[motorF] = 70;
+			motor[motorG] = 70;
+			motor[motorH] = 70;
+			motor[motorI] = 70;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
+
+		turn(-60, 60, 10);
+		forward(70, 30);
+		forward(0, 0);
   //Get to ramp
 	//MAKE AUTONOMOUS B FIRST THEN COMBINE
 }
