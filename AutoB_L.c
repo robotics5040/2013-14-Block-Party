@@ -121,7 +121,7 @@ task main()
   while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
   	forward(60, 0);
 
-  turn(50, -30, 50);
+  turn(-30, 50, 50);
 
 	nMotorEncoder[motorF] = 0;
 
