@@ -174,18 +174,20 @@ task main()
 	int rotated = nMotorEncoder[motorI];
 
   //Align to drop
-	forward(-45, -10);
+	forward(-45, -3);
 	while(SensorValue(SensorIR) != 5)
 		turn(-60, 60, 0);
-	forward(50, 36);
+	forward(50, 40);
 	forward(0, 0);
 
 	//Drop cube
+	nMotorEncoder[motorC] = 0;
+	nMotorEncoder[motorE] = 0;
 	liftTo(700, 25, 82, 6, 15); //Lifts steadily to encoder value 700
 	motor[motorE] = 15; //Continue into stopper
 	wait10Msec(90);
 	motor[motorE] = 0; //Stop the lift
-	while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
+	while (!(nMotorEncoder[motorC] < -8)) //Dump blocks
 	{
 		motor[motorC] = -20;
 		motor[motorB] = -20;
@@ -204,22 +206,24 @@ task main()
 	else
 		turn(-70, 70, 17);
 
-		//line up to start autonomous b
-		while (SensorValue(SensorSonic) > 50)
-		{
-			motor[motorF] = 70;
-			motor[motorG] = 70;
-			motor[motorH] = 70;
-			motor[motorI] = 70;
-		}
-		motor[motorF] = 0;
-		motor[motorG] = 0;
-		motor[motorH] = 0;
-		motor[motorI] = 0;
+	//line up to start going to the ramp
+	while (SensorValue(SensorSonic) > 47)
+	{
+		forward(70, 0);
+	}
+	forward(0, 0);
 
-		turn(-60, 60, 10);
-		forward(70, 30);
-		forward(0, 0);
+	turn(-60, 60, 10);
+	forward(70, 65);
+	turn(-60, 60, 5);
+	forward(0, 0);
   //Get to ramp
-	//MAKE AUTONOMOUS B FIRST THEN COMBINE
+	while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
+  	forward(60, 0);
+
+  turn(-30, 50, 9);
+
+	nMotorEncoder[motorF] = 0;
+
+	forward(70, 50);
 }
