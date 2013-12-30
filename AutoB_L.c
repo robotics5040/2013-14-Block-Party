@@ -54,7 +54,10 @@ void initializeRobot()
 {
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
-
+	nMotorEncoder[motorF] = 0;
+	nMotorEncoder[motorG] = 0;
+	nMotorEncoder[motorH] = 0;
+	nMotorEncoder[motorI] = 0;
   return;
 }
 
@@ -63,8 +66,8 @@ void forward(int power, int distance)
 {
 	if(distance != 0)
 	{
-		nMotorEncoder[motorH] = 0;
-		while (69 * distance > nMotorEncoder[motorH])
+		nMotorEncoder[motorI] = 0;
+		while (69 * distance > abs(nMotorEncoder[motorH]))
 		{
 			motor[motorF] = power;
 			motor[motorG] = power;
@@ -90,8 +93,8 @@ void turn(int powL, int powR, int distance)
 {
 	if(distance != 0)
 	{
-		nMotorEncoder[motorH] = 0;
-		while (69 * distance > nMotorEncoder[motorH])
+		nMotorEncoder[motorI] = 0;
+		while (69 * distance > abs(nMotorEncoder[motorI]))
 		{
 			motor[motorF] = powR;
 			motor[motorG] = powR;
@@ -117,13 +120,14 @@ task main()
   initializeRobot();
 
   //waitForStart(); // Wait for the beginning of autonomous phase.
-
+		forward(40, 20);
   while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
-  	forward(60, 0);
+  	forward(40, 0);
+
 
   turn(-30, 50, 50);
 
 	nMotorEncoder[motorF] = 0;
 
-	forward(70, 100);
+	forward(70, 150);
 }

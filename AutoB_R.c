@@ -54,7 +54,10 @@ void initializeRobot()
 {
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
-
+	nMotorEncoder[motorF] = 0;
+	nMotorEncoder[motorG] = 0;
+	nMotorEncoder[motorH] = 0;
+	nMotorEncoder[motorI] = 0;
   return;
 }
 
@@ -117,9 +120,9 @@ task main()
   initializeRobot();
 
   //waitForStart(); // Wait for the beginning of autonomous phase.
-
+	forward(40, 20);
   while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
-  	forward(60, 0);
+  	forward(40, 0);
 
   turn(50, -30, 50);
 
