@@ -55,7 +55,10 @@ void initializeRobot()
 {
   // Place code here to sinitialize servos to starting positions.
   // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
-
+	nMotorEncoder[motorF] = 0;
+	nMotorEncoder[motorG] = 0;
+	nMotorEncoder[motorH] = 0;
+	nMotorEncoder[motorI] = 0;
 	nMotorEncoder[motorE] = 0;
 	nMotorEncoder[motorC] = 0;
 }
@@ -170,9 +173,8 @@ task main()
 				turn(20, 60, 0);
 		}
 	}
-
 	int rotated = nMotorEncoder[motorI];
-
+	forward(0, 0);
   //Align to drop
 	forward(-45, -3);
 	while(SensorValue(SensorIR) != 5)
@@ -205,25 +207,27 @@ task main()
 		turn(70, -70, 17);
 	else
 		turn(-70, 70, 17);
-
-	//line up to start going to the ramp
-	while (SensorValue(SensorSonic) > 47)
+		//line up to start going to the ramp
+	if(rotated > 3800)
 	{
-		forward(70, 0);
+		forward(20, 30);
 	}
+	else
+	{
+		forward(20, 50);
+	}
+
 	forward(0, 0);
 
-	turn(-60, 60, 10);
+	turn(-60, 60, 9.5);
 	forward(70, 65);
-	turn(-60, 60, 5);
-	forward(0, 0);
-  //Get to ramp
-	while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
-  	forward(60, 0);
+	turn(-60, 60, 6);
+  forward(20, 25);
+  turn(-30, 50, 3.19);
+  forward(30, 63);
 
-  turn(-30, 50, 9);
 
-	nMotorEncoder[motorF] = 0;
+	//nMotorEncoder[motorF] = 0;
 
-	forward(70, 50);
+	//forward(70, 50);
 }
