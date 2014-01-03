@@ -53,14 +53,15 @@
 
 void initializeRobot()
 {
-  // Place code here to sinitialize servos to starting positions.
-  // Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
+	// Place code here to sinitialize servos to starting positions.
+	// Sensors are automatically configured and setup by ROBOTC. They may need a brief time to stabilize.
 	nMotorEncoder[motorF] = 0;
 	nMotorEncoder[motorG] = 0;
 	nMotorEncoder[motorH] = 0;
 	nMotorEncoder[motorI] = 0;
 	nMotorEncoder[motorE] = 0;
 	nMotorEncoder[motorC] = 0;
+
 }
 
 //Used to tilt the block manipulator while addressing weight distribution
@@ -158,29 +159,61 @@ void turn(int powL, int powR, int distance)
 
 task main()
 {
-  initializeRobot();
+	initializeRobot();
 
-  //Find IR while following line
-  nMotorEncoder[motorI] = 0;
+	bool rightSide = false;
+	bool pos1or2 = false;
 
-  if(SensorValue(SensorIR) != 9) //If IR is in closest, skip this part
+	//Find IR while following line
+	nMotorEncoder[motorI] = 0;
+	if(SensorValue(SensorIR) > 5)
+		rightSide = true;
+	if (rightSide)
 	{
-		while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9)
+		if(SensorValue(SensorIR) != 9 || SensorValue(SensorIR) != 8) //If IR is in closest, skip this part
 		{
-			if(SensorValue(SensorColor) > 10)
-				turn(60, 20, 0);
-			else
-				turn(20, 60, 0);
+			while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9)
+			{
+				if(SensorValue(SensorColor) > 10)
+					turn(60, 20, 0);
+				else
+					turn(20, 60, 0);
+			}
+			forward(-45, -3);
 		}
+		else
+			pos1or2 = true;
+		int rotated = nMotorEncoder[motorI];
+		forward(0, 0);
+		//Align to drop
+		while(SensorValue(SensorIR) != 5)
+			turn(-60, 60, 0);
+		forward(50, 40);
+		forward(0, 0);
 	}
-	int rotated = nMotorEncoder[motorI];
-	forward(0, 0);
-  //Align to drop
-	forward(-45, -3);
-	while(SensorValue(SensorIR) != 5)
-		turn(-60, 60, 0);
-	forward(50, 40);
-	forward(0, 0);
+	else
+	{
+		if(SensorValue(SensorIR) != 1 || SensorValue(SensorIR) != 2) //If IR is in closest, skip this part
+		{
+			while(SensorValue(SensorIR) != 1 && SensorValue(SensorIR) != 2)
+			{
+				if(SensorValue(SensorColor) > 10)
+					turn(60, 20, 0);
+				else
+					turn(20, 60, 0);
+			}
+			forward(-45, -3);
+		}
+		else
+			pos1or2 = true;
+		int rotated = nMotorEncoder[motorI];
+		forward(0, 0);
+		//Align to drop
+		while(SensorValue(SensorIR) != 5)
+			turn(60, -60, 0);
+		forward(50, 40);
+		forward(0, 0);
+	}
 
 	//Drop cube
 	nMotorEncoder[motorC] = 0;
@@ -203,31 +236,47 @@ task main()
 	//Retrace steps
 	forward(-50, -17);
 	forward(0, 0);
-	if(rotated > 2000)
+	if((!pos1or2 && rightSide) || (pos1or2 && !rightSide))
+	{
 		turn(70, -70, 17);
+		if((rotated > 3800 && rightSide) || !rightSide)
+		{
+			forward(20, 30);
+		}
+		else
+		{
+			forward(20, 50);
+		}
+
+		forward(0, 0);
+
+		turn(-60, 60, 9.5);
+		forward(70, 65);
+		turn(-60, 60, 6);
+		forward(20, 25);
+		turn(-30, 50, 3.2);
+		forward(30, 63);
+	}
+	//line up to start going to the ramp after dump in 3 or 4
 	else
+	{
 		turn(-70, 70, 17);
-		//line up to start going to the ramp
-	if(rotated > 3800)
-	{
-		forward(20, 30);
+		if((rotated > 3800 && !rightSide) || rightSide)
+		{
+			forward(20, 30);
+		}
+		else
+		{
+			forward(20, 50);
+		}
+
+		forward(0, 0);
+
+		turn(60, -60, 9.5);
+		forward(70, 65);
+		turn(60, -60, 6);
+		forward(20, 25);
+		turn(50, -30, 3.2);
+		forward(30, 63);
 	}
-	else
-	{
-		forward(20, 50);
-	}
-
-	forward(0, 0);
-
-	turn(-60, 60, 9.5);
-	forward(70, 65);
-	turn(-60, 60, 6);
-  forward(20, 25);
-  turn(-30, 50, 3.19);
-  forward(30, 63);
-
-
-	//nMotorEncoder[motorF] = 0;
-
-	//forward(70, 50);
 }
