@@ -163,7 +163,13 @@ task main()
 
 	bool rightSide = false;
 	bool pos1or2 = false;
-
+	int rotated;
+	motor[motorC] = 20;
+	motor[motorB] = 20;
+	wait10Msec(50);
+	motor[motorC] = 0;
+	motor[motorB] = 0;
+	forward(20, 1);
 	//Find IR while following line
 	nMotorEncoder[motorI] = 0;
 	if(SensorValue(SensorIR) > 5)
@@ -183,7 +189,7 @@ task main()
 		}
 		else
 			pos1or2 = true;
-		int rotated = nMotorEncoder[motorI];
+		rotated = nMotorEncoder[motorI];
 		forward(0, 0);
 		//Align to drop
 		while(SensorValue(SensorIR) != 5)
@@ -205,8 +211,8 @@ task main()
 			forward(-45, -3);
 		}
 		else
-			pos1or2 = true;
-		int rotated = nMotorEncoder[motorI];
+			pos1or2 = false;
+		rotated = nMotorEncoder[motorI];
 		forward(0, 0);
 		//Align to drop
 		while(SensorValue(SensorIR) != 5)
@@ -234,10 +240,15 @@ task main()
 	motor[motorE] = 0;
 
 	//Retrace steps
+	motor[motorC] = -20;
+	motor[motorB] = -20;
 	forward(-50, -17);
+	motor[motorB] = 0;
+	motor[motorC] = 0;
 	forward(0, 0);
 	if((!pos1or2 && rightSide) || (pos1or2 && !rightSide))
 	{
+		PlaySound(soundUpwardTones);
 		turn(70, -70, 17);
 		if((rotated > 3800 && rightSide) || !rightSide)
 		{
@@ -254,8 +265,13 @@ task main()
 		forward(70, 65);
 		turn(-60, 60, 6);
 		forward(20, 25);
-		turn(-30, 50, 3.2);
+		turn(-30, 50, 4);
 		forward(30, 63);
+		motor[motorC] = -20;
+		motor[motorB] = -20;
+		wait10Msec(500);
+		motor[motorB] = 0;
+		motor[motorC] = 0;
 	}
 	//line up to start going to the ramp after dump in 3 or 4
 	else
@@ -276,7 +292,12 @@ task main()
 		forward(70, 65);
 		turn(60, -60, 6);
 		forward(20, 25);
-		turn(50, -30, 3.2);
+		turn(50, -30, 4);
 		forward(30, 63);
+		motor[motorC] = -20;
+		motor[motorB] = -20;
+		wait10Msec(500);
+		motor[motorB] = 0;
+		motor[motorC] = 0;
 	}
 }
