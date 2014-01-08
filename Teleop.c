@@ -339,13 +339,13 @@ task main()
 
 		if(joy2Btn(5)) //Tilt Flag Manipulator down - LB
 		{
-			servo[servo1] -= 5;
-			servo[servo2] += 5;
+			servo[servo1] -= 0.5;
+			servo[servo2] += 0.5;
 		}
 		else if(joy2Btn(7)) //Tilt Flag Manipulator up - LT
 		{
-			servo[servo1] += 5;
-			servo[servo2] -= 5;
+			servo[servo1] += 0.5;
+			servo[servo2] -= 0.5;
 		}
 
 		if(joy2Btn(6)) //Spin Flag Manipulator counter-clockwise - RB

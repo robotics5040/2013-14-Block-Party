@@ -161,7 +161,6 @@ task main()
 {
 	initializeRobot();
 
-	bool rightSide = false;
 	bool pos1or2 = false;
 	int rotated;
 	motor[motorC] = 20;
@@ -172,35 +171,18 @@ task main()
 	forward(20, 1);
 	//Find IR while following line
 	nMotorEncoder[motorI] = 0;
-	if(SensorValue(SensorIR) > 5)
-		rightSide = true;
-	if (rightSide)
+	if(SensorValue(SensorIR) != 0) //If IR is in closest, skip this part
 	{
-		if(SensorValue(SensorIR) != 9 || SensorValue(SensorIR) != 8) //If IR is in closest, skip this part
+		while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9 && SensorValue(SensorIR) != 0)
 		{
-			while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9)
-			{
-				if(SensorValue(SensorColor) > 10)
-					turn(60, 20, 0);
-				else
-					turn(20, 60, 0);
-			}
-			forward(-45, -3);
+			if(SensorValue(SensorColor) > 10)
+				turn(60, 20, 0);
+			else
+				turn(20, 60, 0);
 		}
-		else
-			pos1or2 = true;
-		rotated = nMotorEncoder[motorI];
-		forward(0, 0);
-		//Align to drop
-		while(SensorValue(SensorIR) != 5)
-			turn(-60, 60, 0);
-		forward(50, 40);
-		forward(0, 0);
-	}
-	else
-	{
-		if(SensorValue(SensorIR) != 1 || SensorValue(SensorIR) != 2) //If IR is in closest, skip this part
+		if(SensorValue(SensorIR) == 0)
 		{
+			turn(-40, 50, 10);
 			while(SensorValue(SensorIR) != 1 && SensorValue(SensorIR) != 2)
 			{
 				if(SensorValue(SensorColor) > 10)
@@ -208,18 +190,18 @@ task main()
 				else
 					turn(20, 60, 0);
 			}
-			forward(-45, -3);
 		}
-		else
-			pos1or2 = false;
-		rotated = nMotorEncoder[motorI];
-		forward(0, 0);
-		//Align to drop
-		while(SensorValue(SensorIR) != 5)
-			turn(60, -60, 0);
-		forward(50, 40);
-		forward(0, 0);
+		forward(-45, -3);
 	}
+	else
+		pos1or2 = true;
+	rotated = nMotorEncoder[motorI];
+	forward(0, 0);
+	//Align to drop
+	while(SensorValue(SensorIR) != 5)
+		turn(-60, 60, 0);
+	forward(50, 40);
+	forward(0, 0);
 
 	//Drop cube
 	nMotorEncoder[motorC] = 0;
@@ -246,7 +228,7 @@ task main()
 	motor[motorB] = 0;
 	motor[motorC] = 0;
 	forward(0, 0);
-	if((!pos1or2 && rightSide) || (pos1or2 && !rightSide))
+	if(!pos1or2)
 	{
 		PlaySound(soundUpwardTones);
 		turn(70, -70, 17);
