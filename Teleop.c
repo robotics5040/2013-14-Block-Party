@@ -157,6 +157,8 @@ task main()
 
   bool esMotors = false; //Toggled state of Motor E-Stop mode
 	bool esmHold = false; //If the Motor E-Stop button (B) is being held
+	bool pressedLB = false;
+	bool pressedLT = false
 
   while (true)
   {
@@ -336,16 +338,29 @@ task main()
 			liftTo(500, 80, 50, 10, 1);
 			motor[motorE] = 2;
 		}
-
+		if(!joy2Btn(5)&&pressedLB)
+		{
+				pressedLB = false;
+		}
+		if(!joy2Btn(7)&&pressedLT)
+		{
+				pressedLT = false;
+		}
 		if(joy2Btn(5)) //Tilt Flag Manipulator down - LB
 		{
-			servo[servo1] -= 0.5;
-			servo[servo2] += 0.5;
+			if(!pressedLB)
+			{
+				servo[servo2] -= 10;
+				pressedLB = true;
+			}
 		}
 		else if(joy2Btn(7)) //Tilt Flag Manipulator up - LT
 		{
-			servo[servo1] += 0.5;
-			servo[servo2] -= 0.5;
+			if(!pressedLT)
+			{
+				servo[servo2] += 19;
+				pressedLT = true;
+			}
 		}
 
 		if(joy2Btn(6)) //Spin Flag Manipulator counter-clockwise - RB
@@ -357,11 +372,11 @@ task main()
 
 		if(joystick.joy2_TopHat == 0) //Set tilt of Flag Manipulator to ready position - D-Pad Up
 		{
-			servo[servo1] = 90;
+			servo[servo2] = 90;
 		}
 		if(joystick.joy2_TopHat == 4) //Set tilt of Flag Manipulator to idle position - D-Pad Down
 		{
-			servo[servo1] = 0;
+			servo[servo2] = 0;
 		}
   }
 }
