@@ -119,7 +119,7 @@ task main()
 {
   initializeRobot();
 
-  //waitForStart(); // Wait for the beginning of autonomous phase.
+  waitForStart(); // Wait for the beginning of autonomous phase.
 		forward(40, 20);
   while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
   	forward(40, 0);
