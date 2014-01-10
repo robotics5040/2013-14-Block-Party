@@ -302,6 +302,18 @@ task main()
 			motor[motorE] = joystick.joy2_y2 / lift;
 		}
 
+		if(joy2Btn(4)) //Autonomous velcro release - Y
+		{
+			nMotorEncoder[motorB] = 0;
+			while(nMotorEncoder[motorB] < 60)
+			{
+				motor[motorB] = 70;
+				motor[motorC] = 70;
+			}
+			motor[motorB] = 0;
+			motor[motorC] = 0;
+		}
+
 		if(joy2Btn(2)) //Autonomous Dumping for 1-2 Blocks - A
 		{
 			stopMotors();

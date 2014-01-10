@@ -157,21 +157,62 @@ void turn(int powL, int powR, int distance)
 	}
 }
 
+//For condensed code, this function serves as an easy way to turn the robot by specifing the two sides power.
+//This one uses an encoder on the other side.
+void turnL(int powL, int powR, int distance)
+{
+	if(distance != 0)
+	{
+		nMotorEncoder[motorG] = 0;
+		while (69 * abs(distance) > abs(nMotorEncoder[motorG]))
+		{
+			motor[motorF] = powR;
+			motor[motorG] = powR;
+			motor[motorH] = powL;
+			motor[motorI] = powL;
+		}
+		motor[motorF] = 0;
+		motor[motorG] = 0;
+		motor[motorH] = 0;
+		motor[motorI] = 0;
+	}
+	else
+	{
+		motor[motorF] = powR;
+		motor[motorG] = powR;
+		motor[motorH] = powL;
+		motor[motorI] = powL;
+	}
+}
+
+void releaseBucket()
+{
+	nMotorEncoder[motorB] = 0;
+	while(nMotorEncoder[motorB] < 55)
+	{
+		motor[motorB] = 67;
+		motor[motorC] = 67;
+	}
+	motor[motorB] = 0;
+	motor[motorC] = 0;
+}
+
 task main()
 {
 	initializeRobot();
 
+	waitForStart();
+
 	bool pos1or2 = false;
+	bool pos2 = false;
 	int rotated;
-	motor[motorC] = 20;
-	motor[motorB] = 20;
-	wait10Msec(50);
-	motor[motorC] = 0;
-	motor[motorB] = 0;
+
+	releaseBucket();
+
 	forward(20, 1);
 	//Find IR while following line
 	nMotorEncoder[motorI] = 0;
-	if(SensorValue(SensorIR) != 0) //If IR is in closest, skip this part
+	if(SensorValue(SensorIR) != 0 && SensorValue(SensorIR) != 9) //If IR is in closest, skip this part
 	{
 		while(SensorValue(SensorIR) != 8 && SensorValue(SensorIR) != 9 && SensorValue(SensorIR) != 0)
 		{
@@ -180,18 +221,14 @@ task main()
 			else
 				turn(20, 60, 0);
 		}
-		if(SensorValue(SensorIR) == 0)
+		if(SensorValue(SensorIR) == 0 || nMotorEncoder[motorI] < 1000 )
 		{
-			turn(-40, 50, 10);
-			while(SensorValue(SensorIR) != 1 && SensorValue(SensorIR) != 2)
-			{
-				if(SensorValue(SensorColor) > 10)
-					turn(60, 20, 0);
-				else
-					turn(20, 60, 0);
-			}
+			pos1or2 = true;
+			pos2 = true;
+			forward(-45, -2);
 		}
-		forward(-45, -3);
+		else
+			forward(-45, -3);
 	}
 	else
 		pos1or2 = true;
@@ -200,7 +237,18 @@ task main()
 	//Align to drop
 	while(SensorValue(SensorIR) != 5)
 		turn(-60, 60, 0);
-	forward(50, 40);
+	if(pos2)
+		forward(50, 33);
+	else if(pos1or2)
+	{
+		turn(-60, 60, 2);
+		forward(50, 35);
+	}
+	else
+	{
+		turn(-60, 60, 2);
+		forward(50, 35);
+	}
 	forward(0, 0);
 
 	//Drop cube
@@ -230,24 +278,25 @@ task main()
 	forward(0, 0);
 	if(!pos1or2)
 	{
-		PlaySound(soundUpwardTones);
 		turn(70, -70, 17);
-		if((rotated > 3800 && rightSide) || !rightSide)
+		if(rotated > 3800)
 		{
+			PlaySound(soundUpwardTones);
 			forward(20, 30);
 		}
 		else
 		{
+			PlaySound(soundDownwardTones);
 			forward(20, 50);
 		}
 
 		forward(0, 0);
 
-		turn(-60, 60, 9.5);
-		forward(70, 65);
-		turn(-60, 60, 6);
-		forward(20, 25);
-		turn(-30, 50, 4);
+		turn(-60, 60, 10);
+		forward(70, 70);
+		turn(-60, 60, 7);
+		forward(20, 30);
+		turn(-30, 50, 5);
 		forward(30, 63);
 		motor[motorC] = -20;
 		motor[motorB] = -20;
@@ -259,23 +308,26 @@ task main()
 	else
 	{
 		turn(-70, 70, 17);
-		if((rotated > 3800 && !rightSide) || rightSide)
+		if(pos2)
 		{
-			forward(20, 30);
+			turn(-70, 70, 7);
+			PlaySound(soundBeepBeep);
+			forward(20, 70);
 		}
 		else
 		{
-			forward(20, 50);
+			PlaySound(soundBlip);
+			forward(20, 60);
 		}
 
 		forward(0, 0);
 
-		turn(60, -60, 9.5);
-		forward(70, 65);
-		turn(60, -60, 6);
-		forward(20, 25);
-		turn(50, -30, 4);
-		forward(30, 63);
+		turnL(70, -50, 12);
+		forward(60, 35);
+		turnL(50, -30, 20);
+		forward(20, 28);
+		turnL(70, -50, 37);
+		forward(30, 80);
 		motor[motorC] = -20;
 		motor[motorB] = -20;
 		wait10Msec(500);
