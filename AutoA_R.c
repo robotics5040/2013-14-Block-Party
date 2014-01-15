@@ -258,7 +258,7 @@ task main()
 	motor[motorE] = 15; //Continue into stopper
 	wait10Msec(90);
 	motor[motorE] = 0; //Stop the lift
-	while (!(nMotorEncoder[motorC] < -8)) //Dump blocks
+	while (!(nMotorEncoder[motorC] < 40)) //Dump blocks
 	{
 		motor[motorC] = -20;
 		motor[motorB] = -20;

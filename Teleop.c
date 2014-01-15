@@ -73,8 +73,8 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 	int powCurr = startPower;
 
 	bool forward = encTarget > encCurr;
-
-	while (!(nMotorEncoder[motorE] < encTarget + threshold && !forward) && !(nMotorEncoder[motorE] > encTarget - threshold && forward))
+	ClearTimer(T1);
+	while ((time10[T1] < 15000)&&(nMotorEncoder[motorE] < encTarget + threshold && !forward) && !(nMotorEncoder[motorE] > encTarget - threshold && forward) && joy1Btn(3) && joy2Btn(3))
 	{
 
 		if (nMotorEncoder[motorE] != encCurr)// && !passed) //Checks if encoder value moved and adjusts the power
@@ -97,6 +97,27 @@ void liftTo(int encTarget, int threshold, int startPower, int endPower, int tilt
 		{
 			motor[motorB] = tiltPower / -5;
 			motor[motorC] = tiltPower / -5;
+		}
+	}
+}
+
+task eStop()
+{
+	while(true)
+	{
+		getJoystickSettings(joystick);
+		if(joy1Btn(10) && joy2Btn(10)) //Program will pause everything when E-Stop button (start) hit on both controllers
+		{
+			stopMotors();
+			while (joy1Btn(10) && joy2Btn(10)) //Wait until the buttons are released
+			{
+				getJoystickSettings(joystick);
+			}
+			while (!(joy1Btn(10) && joy2Btn(10))) //Wait until they are pressed again
+			{
+				getJoystickSettings(joystick);
+			}
+			getJoystickSettings(joystick);
 		}
 	}
 }
@@ -158,27 +179,13 @@ task main()
   bool esMotors = false; //Toggled state of Motor E-Stop mode
 	bool esmHold = false; //If the Motor E-Stop button (B) is being held
 	bool pressedLB = false;
-	bool pressedLT = false
+	bool pressedLT = false;
+
+	StartTask(eStop);
 
   while (true)
   {
 	  getJoystickSettings(joystick);
-
-	  //Emergency Stop
-
-		if (joy1Btn(10) && joy2Btn(10)) //Program will stop when E-Stop button (start) hit on both controllers
-		{
-			stopMotors();
-			while (joy1Btn(10) && joy2Btn(10)) //Wait until the buttons are released
-			{
-				getJoystickSettings(joystick);
-			}
-			while (!(joy1Btn(10) && joy2Btn(10))) //Wait until they are pressed again
-			{
-				getJoystickSettings(joystick);
-			}
-			getJoystickSettings(joystick);
-		}
 
 	  //Controller 1 - Motors
 
@@ -305,7 +312,7 @@ task main()
 		if(joy2Btn(4)) //Autonomous velcro release - Y
 		{
 			nMotorEncoder[motorB] = 0;
-			while(nMotorEncoder[motorB] < 60)
+			while(nMotorEncoder[motorB] < 60 && joy1Btn(3) && joy2Btn(3))
 			{
 				motor[motorB] = 70;
 				motor[motorC] = 70;
@@ -321,7 +328,7 @@ task main()
 			motor[motorE] = 15; //Continue into stopper
 			wait10Msec(90);
 			motor[motorE] = 0; //Stop the lift
-			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
+			while (!(nMotorEncoder[motorC] < -10) && joy1Btn(3) && joy2Btn(3)) //Dump blocks
 			{
 				motor[motorC] = -20;
 				motor[motorB] = -20;
@@ -339,7 +346,7 @@ task main()
 			motor[motorE] = 15; //Continue into stopper
 			wait10Msec(90);
 			motor[motorE] = 0; //Stop the lift
-			while (!(nMotorEncoder[motorC] < -10)) //Dump blocks
+			while (!(nMotorEncoder[motorC] < -10) && joy1Btn(3) && joy2Btn(3)) //Dump blocks
 			{
 				motor[motorC] = -20;
 				motor[motorB] = -20;
