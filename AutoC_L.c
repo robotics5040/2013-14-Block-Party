@@ -115,24 +115,101 @@ void turn(int powL, int powR, int distance)
 	}
 }
 
+
+//Used to tilt the block manipulator while addressing weight distribution
+void liftTo(int encTarget, int threshold, int startPower, int endPower, int tiltPower)
+{
+	motor[motorE] = 20;
+	int encStart = nMotorEncoder[motorE];
+	float rate = (startPower - endPower) / abs(encTarget - encStart);
+
+	int encCurr = nMotorEncoder[motorE];
+	int powCurr = startPower;
+
+	bool forward = encTarget > encCurr;
+
+	while (!(nMotorEncoder[motorE] < encTarget + threshold && !forward) && !(nMotorEncoder[motorE] > encTarget - threshold && forward))
+	{
+
+		if (nMotorEncoder[motorE] != encCurr)// && !passed) //Checks if encoder value moved and adjusts the power
+		{
+			powCurr += rate * abs(nMotorEncoder[motorE] - encCurr);
+			encCurr = nMotorEncoder[motorE];
+		}
+
+		if (nMotorEncoder[motorE] > encTarget) //Sets the power based on direction
+			motor[motorE] = powCurr * -1;
+		else
+			motor[motorE] = powCurr;
+
+		if (abs(nMotorEncoder[motorE] - encStart) > 400)
+		{
+			motor[motorB] = tiltPower * -1;
+			motor[motorC] = tiltPower * -1;
+		}
+		else
+		{
+			motor[motorB] = tiltPower / 5;
+			motor[motorC] = tiltPower / 5;
+		}
+	}
+}
+
+void releaseBucket()
+{
+	nMotorEncoder[motorB] = 0;
+	while(nMotorEncoder[motorB] < 52)
+	{
+		motor[motorB] = 67;
+		motor[motorC] = 67;
+	}
+	motor[motorB] = 0;
+	motor[motorC] = 0;
+}
+
 task main()
 {
   initializeRobot();
 
   waitForStart(); // Wait for the beginning of autonomous phase.
-  	forward(40, x);//insert distance for x move to dumping position(you will get an error until x has been changed)
-  	//insert new lift code here lift function needs to be put above task main as well
-  	forward(-40,-5);//back up 5 inches from scoring zone
-  	turn(50, -30, 19);// turn to set up autoB (this will need to be adjusted to be a perfect 90 degree turn)
-    //AutoB_L run
-		forward(40, 20);
+  releaseBucket();
+  forward(40, 13);
+	nMotorEncoder[motorC] = 0;
+	nMotorEncoder[motorE] = 0;
+	Sleep(300);
+	liftTo(460, 25, 82, 6, 15); //Lifts steadily to encoder value
+	motor[motorE] = 21; //Continue into stopper
+	wait10Msec(130);
+	motor[motorE] = 0; //Stop the lift
+	while (!(nMotorEncoder[motorC] < -18)) //Dump blocks
+	{
+		motor[motorC] = -20;
+		motor[motorB] = -20;
+	}
+	motor[motorB] = 0;
+	motor[motorC] = 0;
+	wait10Msec(30);
+	liftTo(300, 80, 50, 10, 1);
+	motor[motorE] = 0;
+	motor[motorE] = 0;
+	motor[motorF] = -40;
+	motor[motorG] = -40;
+	motor[motorH] = -40;
+	motor[motorI] = -40;
+	Sleep(300);
+	motor[motorF] = 0;
+	motor[motorG] = 0;
+	motor[motorH] = 0;
+	motor[motorI] = 0;
+	turn(50, -30, 60);// turn to set up autoB (this will need to be adjusted to be a perfect 90 degree turn)
+  //AutoB_R run
+	forward(40, 40);
   while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
-  	forward(40, 0);
-
+		forward(40, 0);
 
   turn(-30, 50, 50);
 
 	nMotorEncoder[motorF] = 0;
 
-	forward(70, 150);
+	forward(70, 175);
 }
