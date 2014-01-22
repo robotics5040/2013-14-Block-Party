@@ -120,25 +120,32 @@ task main()
   initializeRobot();
 
   waitForStart(); // Wait for the beginning of autonomous phase.
-  int dump = 0;
+  bool dump = false;
   Sleep(0); //this tells te robot to delay 1000 = 1 second
- 	while(nMotorEncoder(motorH)/69 < 200) //go to position 4
-	{
-		motor[motorF] = 40;
-		motor[motorG] = 40;
-		motor[motorH] = 40;
-		motor[motorI] = 40;
 
-		if(SensorValue(S2) == 5)
+	motor[motorF] = 40;
+	motor[motorG] = 40;
+	motor[motorH] = 40;
+	motor[motorI] = 40;
+ 	while(nMotorEncoder(motorH)/69 < 110) //go to position 4
+	{
+
+		if(SensorValue(S2) == 5 && !dump)
 		{
 			motor[motorF] = 0;
 			motor[motorG] = 0;
 			motor[motorH] = 0;
 			motor[motorI] = 0;
-			motor[motorA] = 30;
-			Sleep(300);
+			while(nMotorEncoder(motorA) < 100)
+			{
+				motor[motorA] = 50;
+			}
 			motor[motorA] = 0;
-			dump = 1;
+			dump = true;
+			motor[motorF] = 40;
+			motor[motorG] = 40;
+			motor[motorH] = 40;
+			motor[motorI] = 40;
 		}
 	}
 	motor[motorF] = 0;
@@ -146,11 +153,17 @@ task main()
 	motor[motorH] = 0;
 	motor[motorI] = 0;
 
-	if(dump == 0)
+	if(!dump)
 	{
-		motor[motorA] = 30;
-		Sleep(300);
-		motor[motorA] = 0;
+			motor[motorF] = 0;
+			motor[motorG] = 0;
+			motor[motorH] = 0;
+			motor[motorI] = 0;
+			while(nMotorEncoder(motorA) < 100)
+			{
+				motor[motorA] = 50;
+			}
+			motor[motorA] = 0;
 	}
   //we need the course to add in getting on the ramp
 }
