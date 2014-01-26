@@ -173,7 +173,7 @@ task main()
 
   waitForStart(); // Wait for the beginning of autonomous phase.
   releaseBucket();
-  forward(40, 13);
+  forward(40, 19);
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoder[motorE] = 0;
 	Sleep(300);
@@ -202,5 +202,5 @@ task main()
 
 	nMotorEncoder[motorF] = 0;
 
-	forward(70, 100);
+	forward(70, 75);
 }

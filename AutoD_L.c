@@ -118,8 +118,7 @@ void turn(int powL, int powR, int distance)
 task main()
 {
   initializeRobot();
-
-  waitForStart(); // Wait for the beginning of autonomous phase.
+	 // Wait for the beginning of autonomous phase.
   bool dump = false;
   Sleep(0); //this tells te robot to delay 1000 = 1 second
 
@@ -127,7 +126,7 @@ task main()
 	motor[motorG] = 40;
 	motor[motorH] = 40;
 	motor[motorI] = 40;
- 	while(nMotorEncoder(motorH)/69 < 110) //go to position 4
+ 	while(nMotorEncoder(motorH)/69 < 113) //go to position 4
 	{
 
 		if(SensorValue(S2) == 5 && !dump)
@@ -165,5 +164,18 @@ task main()
 			}
 			motor[motorA] = 0;
 	}
+  forward(40, 25);
+  turn(50, -50, 27);
+  forward(40, 20);
+  turn(50, -50, 10);
+  forward(40, 20);
+  while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
+  	forward(40, 0);
+
+  turn(50, -30, 50);
+
+	nMotorEncoder[motorF] = 0;
+
+	forward(70, 100);
   //we need the course to add in getting on the ramp
 }

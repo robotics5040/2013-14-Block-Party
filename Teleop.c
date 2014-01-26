@@ -342,7 +342,7 @@ task main()
 		if(joy2Btn(1)) //Autonomous Dumping for 3-4 Blocks - X
 		{
 			stopMotors();
-			liftTo(700, 25, 82, 6, 15); //Lifts steadily to encoder value 700
+			liftTo(475, 25, 82, 6, 15); //Lifts steadily to encoder value 700
 			motor[motorE] = 15; //Continue into stopper
 			wait10Msec(90);
 			motor[motorE] = 0; //Stop the lift
@@ -383,9 +383,9 @@ task main()
 		}
 
 		if(joy2Btn(6)) //Spin Flag Manipulator counter-clockwise - RB
-			motor[motorD] = -30;
+			motor[motorD] = -75;
 		else if(joy2Btn(8)) //Spin Flag Manipulator clockwise - RT
-			motor[motorD] = 30;
+			motor[motorD] = 75;
 		else
 			motor[motorD] = 0;
 
