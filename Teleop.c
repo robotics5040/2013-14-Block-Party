@@ -3,6 +3,8 @@
 #pragma config(Sensor, S2,     SensorIR,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     SensorColor,    sensorCOLORFULL)
 #pragma config(Sensor, S4,     SensorSonic,    sensorSONAR)
+#pragma config(Motor,  motorB,           ,             tmotorNXT, PIDControl, reversed, encoder)
+#pragma config(Motor,  motorC,           ,             tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed, encoder)
@@ -294,10 +296,15 @@ task main()
 			motor[motorC] = 0;
 			motor[motorB] = 0;
 		}
-		else //Tilt Block Manipulator - LS
+		else if(joystick.joy2_y1 < -10) //Tilt Block Manipulator - LS
 		{
-			motor[motorC] = joystick.joy2_y1 / tilt;
-			motor[motorB] = joystick.joy2_y1 / tilt;
+			motor[motorC] = -100;
+			motor[motorB] = -100;
+		}
+		else
+		{
+			motor[motorC] = 100;
+			motor[motorB] = 100;
 		}
 
 		if (joystick.joy2_y2 < 5 && joystick.joy2_y2 > -5) //Threshold
