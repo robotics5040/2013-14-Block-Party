@@ -122,16 +122,16 @@ void turn(int powL, int powR, int distance)
 task main()
 {
   initializeRobot();
-	waitForStart();
- 	// Wait for the beginning of autonomous phase.
+
+  waitForStart(); // Wait for the beginning of autonomous phase.
   bool dump = false;
   Sleep(0); //this tells te robot to delay 1000 = 1 second
 
-	motor[motorF] = 40;
-	motor[motorG] = 40;
-	motor[motorH] = 40;
-	motor[motorI] = 40;
- 	while(nMotorEncoder[motorH]/69 < 110 && !dump) //go to position 4 if it has not dumped yet
+	motor[motorF] = -40;
+	motor[motorG] = -40;
+	motor[motorH] = -40;
+	motor[motorI] = -40;
+ 	while(nMotorEncoder[motorH]/69 > -140) //go to position 4 if it has not dumped yet
 	{
 
 		if(SensorValue(S2) == 5 && !dump)
@@ -146,10 +146,10 @@ task main()
 			}
 			motor[motorA] = 0;
 			dump = true;
-			motor[motorF] = 40;
-			motor[motorG] = 40;
-			motor[motorH] = 40;
-			motor[motorI] = 40;
+			motor[motorF] = -40;
+			motor[motorG] = -40;
+			motor[motorH] = -40;
+			motor[motorI] = -40;
 		}
 	}
 	motor[motorF] = 0;
@@ -169,86 +169,9 @@ task main()
 			}
 			motor[motorA] = 0;
 	}
-	while(nMotorEncoder[motorH]/69 > 10)
+	while(nMotorEncoder[motorH]/69 < -25)
 	{
-		motor[motorF] = -40;
-		motor[motorG] = -40;
-		motor[motorH] = -40;
-		motor[motorI] = -40;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	  nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 > -20)
-	{
-  	motor[motorF] = 40;
-		motor[motorG] = 40;
-		motor[motorH] = -60;
-		motor[motorI] = -60;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 > -14)
-	{
-  	motor[motorF] = -40;
-		motor[motorG] = -40;
-		motor[motorH] = -40;
-		motor[motorI] = -40;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 > -20)
-	{
-  	motor[motorF] = 40;
-		motor[motorG] = 40;
-		motor[motorH] = -60;
-		motor[motorI] = -60;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	while(SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)//auto b just backwards
-	{
-  	motor[motorF] = -20;
-		motor[motorG] = -20;
-		motor[motorH] = -20;
-		motor[motorI] = -20;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 < 24)
-	{
-  	motor[motorF] = -40;
-		motor[motorG] = -40;
-		motor[motorH] = 40;
-		motor[motorI] = 40;
-	}
-	motor[motorF] = 0;
-	motor[motorG] = 0;
-	motor[motorH] = 0;
-	motor[motorI] = 0;
-
-	nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 < 110)
-	{
-  	motor[motorF] = 40;
+		motor[motorF] = 40;
 		motor[motorG] = 40;
 		motor[motorH] = 40;
 		motor[motorI] = 40;
@@ -257,4 +180,18 @@ task main()
 	motor[motorG] = 0;
 	motor[motorH] = 0;
 	motor[motorI] = 0;
+
+  turn(50, -50, 27);
+  forward(40, 20);
+  turn(50, -50, 10);
+  forward(40, 20);
+  while (SensorValue[SensorColor] > 10 || SensorValue[SensorColor] == 0)
+  	forward(40, 0);
+
+  turn(50, -30, 50);
+
+	nMotorEncoder[motorF] = 0;
+
+	forward(40, 100);
+	forward(20, 5);
 }
