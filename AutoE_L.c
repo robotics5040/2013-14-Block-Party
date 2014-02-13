@@ -125,8 +125,8 @@ task main()
 	waitForStart();
  	// Wait for the beginning of autonomous phase.
   bool dump = false;
-  Sleep(0); //this tells te robot to delay 1000 = 1 second
-
+  Sleep(13000); //this tells te robot to delay 1000 = 1 second
+	nMotorEncoder[motorH] = 0;
 	motor[motorF] = 40;
 	motor[motorG] = 40;
 	motor[motorH] = 40;

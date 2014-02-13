@@ -126,7 +126,7 @@ task main()
 	 // Wait for the beginning of autonomous phase.
   bool dump = false;
   Sleep(0); //this tells te robot to delay 1000 = 1 second
-
+	nMotorEncoder[motorH] = 0;
 	motor[motorF] = 40;
 	motor[motorG] = 40;
 	motor[motorH] = 40;
@@ -169,7 +169,7 @@ task main()
 			}
 			motor[motorA] = 0;
 	}
-  forward(40, 25);
+  forward(40, 25);// start of ramp line up
   turn(50, -50, 27);
   forward(40, 20);
   turn(50, -50, 10);

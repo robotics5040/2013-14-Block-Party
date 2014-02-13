@@ -125,13 +125,14 @@ task main()
 
   waitForStart(); // Wait for the beginning of autonomous phase.
   bool dump = false;
+  nMotorEncoder[motorA] = 0;
   Sleep(0); //this tells te robot to delay 1000 = 1 second
 
 	motor[motorF] = -40;
 	motor[motorG] = -40;
 	motor[motorH] = -40;
 	motor[motorI] = -40;
- 	while(nMotorEncoder[motorH]/69 > -140) //go to position 4 if it has not dumped yet
+ 	while(nMotorEncoder[motorH]/69 > -140 && !dump) //go to position 4 if it has not dumped yet
 	{
 
 		if(SensorValue(S2) == 5 && !dump)
@@ -140,7 +141,7 @@ task main()
 			motor[motorG] = 0;
 			motor[motorH] = 0;
 			motor[motorI] = 0;
-			while(nMotorEncoder[motorA] < 100)
+			while(nMotorEncoder[motorA] < 90)
 			{
 				motor[motorA] = 50;
 			}
@@ -163,7 +164,7 @@ task main()
 			motor[motorG] = 0;
 			motor[motorH] = 0;
 			motor[motorI] = 0;
-			while(nMotorEncoder[motorA] < 100)
+			while(nMotorEncoder[motorA] < 90)
 			{
 				motor[motorA] = 50;
 			}

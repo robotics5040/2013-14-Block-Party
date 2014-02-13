@@ -1,21 +1,19 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTMotor)
 #pragma config(Hubs,  S4, HTServo,  none,     none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     SensorIR,       sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     SensorColor,    sensorCOLORFULL)
-#pragma config(Sensor, S4,     SensorSonic,    sensorI2CMuxController)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, PIDControl, reversed, encoder)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, PIDControl, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C1_1,      ,             tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,      ,             tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C2_1,     motorD,        tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_2,     motorE,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C2_2,     motorE,        tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C4_1,     motorH,        tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C4_2,     motorI,        tmotorTetrix, openLoop)
 #pragma config(Servo,  srvo_S4_C1_1,    servo1,               tServoNone)
-#pragma config(Servo,  srvo_S4_C1_2,    servo2,               tServoNone)
+#pragma config(Servo,  srvo_S4_C1_2,    servo2,               tServoStandard)
 #pragma config(Servo,  srvo_S4_C1_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S4_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S4_C1_5,    servo5,               tServoNone)
@@ -185,7 +183,7 @@ task main()
 	bool esmHold = false; //If the Motor E-Stop button (B) is being held
 	bool pressedLB = false;
 	bool pressedLT = false;
-	bool toggleFront = false;
+	bool toggleFront = true;
 	StartTask(eStop);
 
   while (true)
