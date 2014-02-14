@@ -137,6 +137,19 @@ task main()
 
 		if(SensorValue(S2) == 5 && !dump)
 		{
+			if(nMotorEncoder[motorH] > -3795)
+			{
+				Sleep(350);
+			}
+			else
+			{
+				forward(0, 0);
+				motor[motorF] = 20;
+				motor[motorG] = 20;
+				motor[motorH] = 20;
+				motor[motorI] = 20;
+				Sleep(300);
+			}
 			motor[motorF] = 0;
 			motor[motorG] = 0;
 			motor[motorH] = 0;

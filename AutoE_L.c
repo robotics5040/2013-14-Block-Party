@@ -125,7 +125,7 @@ task main()
 	waitForStart();
  	// Wait for the beginning of autonomous phase.
   bool dump = false;
-  Sleep(13000); //this tells te robot to delay 1000 = 1 second
+  Sleep(0); //this tells te robot to delay 1000 = 1 second
 	nMotorEncoder[motorH] = 0;
 	motor[motorF] = 40;
 	motor[motorG] = 40;
@@ -136,6 +136,19 @@ task main()
 
 		if(SensorValue(S2) == 5 && !dump)
 		{
+			if(nMotorEncoder[motorH] < 3795)
+			{
+				Sleep(350);
+			}
+			else
+			{
+				forward(0, 0);
+				motor[motorF] = -20;
+				motor[motorG] = -20;
+				motor[motorH] = -20;
+				motor[motorI] = -20;
+				Sleep(300);
+			}
 			motor[motorF] = 0;
 			motor[motorG] = 0;
 			motor[motorH] = 0;
@@ -233,7 +246,7 @@ task main()
 	motor[motorI] = 0;
 
 	nMotorEncoder[motorH] = 0;
-  while(nMotorEncoder(motorH)/69 < 24)
+  while(nMotorEncoder(motorH)/69 < 21)
 	{
   	motor[motorF] = -40;
 		motor[motorG] = -40;
